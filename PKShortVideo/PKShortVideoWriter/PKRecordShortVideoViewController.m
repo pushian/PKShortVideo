@@ -67,15 +67,17 @@ static CGFloat const PKRecordButtonWidth = 90;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
+    CGFloat topMargin = 66;// modified by yangfan
     PKPreviewLayerHeight = ceilf(3/4.0 * kScreenWidth);
-    CGFloat spaceHeight = ceilf( (kScreenHeight - 44 - PKPreviewLayerHeight)/3 );
+    CGFloat spaceHeight = ceilf( (kScreenHeight - topMargin - PKPreviewLayerHeight)/3 );
     PKRecordButtonVarticalHeight = ceilf( kScreenHeight - 2 * spaceHeight );
     PKOtherButtonVarticalHeight = ceilf( kScreenHeight - spaceHeight );
     
     self.view.backgroundColor = [UIColor blackColor];
     
-    UIToolbar *toolbar = [[UIToolbar alloc] initWithFrame:CGRectMake(0, 0, kScreenWidth, 44)];
+//    UIToolbar *toolbar = [[UIToolbar alloc] initWithFrame:CGRectMake(0, 0, kScreenWidth, topMargin)];
+    //yangfan
+    UIToolbar *toolbar = [[UIToolbar alloc] initWithFrame:CGRectMake(0, 22, kScreenWidth, topMargin - 22)];
     toolbar.barTintColor = [UIColor blackColor];
     toolbar.translucent = NO;
     [self.view addSubview:toolbar];
@@ -84,11 +86,13 @@ static CGFloat const PKRecordButtonWidth = 90;
     
     UIBarButtonItem *flexible = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:self action:nil];
     
-    UIBarButtonItem *transformItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"PK_Camera_Turn"] style:UIBarButtonItemStyleDone target:self action:@selector(swapCamera)];
-    transformItem.tintColor = [UIColor whiteColor];
+    //by yangfan
+//    UIBarButtonItem *transformItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"switch_camera"] style:UIBarButtonItemStyleDone target:self action:@selector(swapCamera)];
+//    transformItem.tintColor = [UIColor whiteColor];
     
-    [toolbar setItems:@[cancelItem,flexible,transformItem]];
-    
+//    [toolbar setItems:@[cancelItem,flexible,transformItem]];
+    [toolbar setItems:@[cancelItem,flexible]];
+
     //创建视频录制对象
     self.recorder = [[PKShortVideoRecorder alloc] initWithOutputFilePath:self.outputFilePath outputSize:self.outputSize];
     //通过代理回调
@@ -96,10 +100,10 @@ static CGFloat const PKRecordButtonWidth = 90;
     //录制时需要获取预览显示的layer，根据情况设置layer属性，显示在自定义的界面上
     AVCaptureVideoPreviewLayer *previewLayer = [self.recorder previewLayer];
     previewLayer.videoGravity = AVLayerVideoGravityResizeAspectFill;
-    previewLayer.frame = CGRectMake(0, 44, kScreenWidth, PKPreviewLayerHeight);
+    previewLayer.frame = CGRectMake(0, topMargin, kScreenWidth, PKPreviewLayerHeight);
     [self.view.layer insertSublayer:previewLayer atIndex:0];
     
-    self.progressBar = [[PKShortVideoProgressBar alloc] initWithFrame:CGRectMake(0, 44 + PKPreviewLayerHeight - 5, kScreenWidth, 5) themeColor:self.themeColor duration:self.videoMaximumDuration];
+    self.progressBar = [[PKShortVideoProgressBar alloc] initWithFrame:CGRectMake(0, topMargin + PKPreviewLayerHeight - 5, kScreenWidth, 5) themeColor:self.themeColor duration:self.videoMaximumDuration];
     [self.view addSubview:self.progressBar];
     
     self.recordButton = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -129,7 +133,6 @@ static CGFloat const PKRecordButtonWidth = 90;
 - (BOOL)prefersStatusBarHidden {
     return YES;
 }
-
 
 
 #pragma mark - Private 
@@ -259,11 +262,13 @@ static CGFloat const PKRecordButtonWidth = 90;
             [self endRecordingWithPath:outputFilePath failture:NO];
         } else {
             self.outputFilePath = outputFilePath;
-            [self.recordButton setTitle:@"发送" forState:UIControlStateNormal];
+            //yangfan
+            [self.recordButton setTitle:@"确定" forState:UIControlStateNormal];
             
             self.playButton = [UIButton buttonWithType:UIButtonTypeCustom];
             self.playButton.tintColor = self.themeColor;
-            UIImage *playImage = [[UIImage imageNamed:@"PK_Play"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+//            UIImage *playImage = [[UIImage imageNamed:@"PK_Play"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+            UIImage *playImage = [UIImage imageNamed:@"PK_Play"];
             [self.playButton setImage:playImage forState:UIControlStateNormal];
             [self.playButton sizeToFit];
             self.playButton.center = CGPointMake((kScreenWidth-PKRecordButtonWidth)/2/2, PKOtherButtonVarticalHeight);
@@ -271,7 +276,8 @@ static CGFloat const PKRecordButtonWidth = 90;
             
             self.refreshButton = [UIButton buttonWithType:UIButtonTypeCustom];
             self.refreshButton.tintColor = self.themeColor;
-            UIImage *refreshImage = [[UIImage imageNamed:@"PK_Delete"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+//            UIImage *refreshImage = [[UIImage imageNamed:@"PK_Delete"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+            UIImage *refreshImage = [UIImage imageNamed:@"PK_Delete"];
             [self.refreshButton setImage:refreshImage forState:UIControlStateNormal];
             [self.refreshButton sizeToFit];
             self.refreshButton.center = CGPointMake(kScreenWidth-(kScreenWidth-PKRecordButtonWidth)/2/2, PKOtherButtonVarticalHeight);
